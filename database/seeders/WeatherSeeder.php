@@ -3,29 +3,30 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Weather; // koristimo naš model
+use App\Models\Cities;
+use App\Models\Weather;
 
 class WeatherSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        // Naša "prognoza" koju ćemo ubaciti u bazu
-        $prognoza = [
-            'Beograd'   => 22,
-            'Novi Sad'  => 23,
-            'Sarajevo'  => 24,
-            'Zagreb'    => 26,
-        ];
+        $cities = Cities::all();
 
-        foreach ($prognoza as $city => $temperature) {
+        foreach ($cities as $city) {
+
+            // Provjeri postoji li već weather za taj grad
+            $existing = Weather::where('city_id', $city->id)->first();
+
+            if ($existing !== null) {
+                $this->command->getOutput()->error("Grad {$city->name} već ima weather zapis!");
+                continue;
+            }
+
+            // Ako ne postoji, kreiraj novi
             Weather::create([
-                'city'        => $city,
-                'temperature' => $temperature,
+                'city_id' => $city->id,
+                'temperature' => rand(15, 30),
             ]);
         }
     }
 }
-

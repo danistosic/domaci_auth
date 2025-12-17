@@ -1,0 +1,33 @@
+{
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true,
+
+    "[php]": {
+        "editor.defaultFormatter": "bmewburn.vscode-intelephense-client"
+    },
+    "[blade]": {
+        "editor.defaultFormatter": "shufo.vscode-blade-formatter"
+    },
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[json]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[css]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[html]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+
+    "bladeFormatter.format.indentSize": 4,
+    "bladeFormatter.format.wrapAttributes": "auto",
+    "bladeFormatter.format.sortTailwindcssClasses": true,
+
+    "intelephense.format.enable": true,
+
+    "prettier.useTabs": false,
+    "prettier.singleQuote": false,
+    "prettier.printWidth": 120
+}
