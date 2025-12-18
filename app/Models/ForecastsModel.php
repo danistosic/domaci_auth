@@ -13,4 +13,10 @@ class ForecastsModel extends Model
         'temperature',
         'forecast_date',
     ];
+
+    // Forecast pripada jednom gradu
+    public function city()
+    {
+        return $this->belongsTo(Cities::class, 'city_id', 'id');
+    }
 }

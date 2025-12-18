@@ -6,13 +6,22 @@ use Illuminate\Database\Eloquent\Model;
 
 class Weather extends Model
 {
-    // Na koju se tablicu ovaj model veže
     protected $table = 'weather';
 
-    // Koja polja smijemo puniti iz koda (mass assignment)
     protected $fillable = [
-        'city',
+        'city_id',
         'temperature',
     ];
-}
 
+    // Weather pripada jednom gradu
+    public function city()
+    {
+        return $this->belongsTo(Cities::class, 'city_id', 'id');
+    }
+
+    // Many-to-many korisnik ↔ weather preko user_weather
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'user_weather', 'weather_id', 'user_id');
+    }
+}

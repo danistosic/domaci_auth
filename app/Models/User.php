@@ -45,4 +45,14 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function weather()
+    {
+        return $this->belongsToMany(Weather::class, 'user_weather', 'user_id', 'weather_id');
+    }
+
+    public function userWeather()
+    {
+        return $this->hasMany(UserWeather::class, 'user_id', 'id');
+    }
 }

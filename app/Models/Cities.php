@@ -11,4 +11,16 @@ class Cities extends Model
     protected $fillable = [
         'name',
     ];
+
+    // Jedan grad ima JEDAN weather zapis
+    public function weather()
+    {
+        return $this->hasOne(Weather::class, 'city_id', 'id');
+    }
+
+    // Jedan grad ima VIŠE forecast zapisa
+    public function forecasts()
+    {
+        return $this->hasMany(ForecastsModel::class, 'city_id', 'id');
+    }
 }
