@@ -2,35 +2,27 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Weather;
+use App\Models\Cities;
+use App\Models\ForecastsModel;
 
 class ForecastController extends Controller
 {
     public function index($city)
     {
-        // 1) Normalizacija - pretvaranje u mala slova
+        // pretvaranje u mala slova
         $city = strtolower($city);
 
-        // 2) Pronađi grad u bazi
-        $weather = Weather::where('city', $city)->first();
+        // pronalazak grada po imenu (case-insensitive)
+        $grad = Cities::whereRaw('LOWER(name) = ?', [$city])->first();
 
-        // 3) Ako grad ne postoji – error poruka
-        if (!$weather) {
-            return "Grad '{$city}' ne postoji u weather tablici!";
+        if (!$grad) {
+            return "Grad '{$city}' ne postoji u bazi.";
         }
 
-        // 4) Kreiranje prognoze za narednih 5 dana (random vrijednosti)
-        $forecast = [
-            rand(20, 30),
-            rand(20, 30),
-            rand(20, 30),
-            rand(20, 30),
-            rand(20, 30),
-        ];
+        // dohvat prognoze za taj grad
+        $prognoze = ForecastsModel::where('city_id', $grad->id)->get();
 
-        // 5) Ispis korisniku
-        return "Prognoza za {$city}: " . implode(', ', $forecast);
+        // vrati view forecasts.blade.php
+        return view('forecasts', compact('prognoze'));
     }
 }
-
-

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Cities;
 
 class ForecastsModel extends Model
 {
@@ -12,9 +13,14 @@ class ForecastsModel extends Model
         'city_id',
         'temperature',
         'forecast_date',
+        'weather_type',
+        'probability',
     ];
 
-    // Forecast pripada jednom gradu
+    // Lista mogućih weather type vrijednosti
+    const WEATHERS = ['rainy', 'sunny', 'snowy'];
+
+    // Veza: forecast pripada jednom gradu
     public function city()
     {
         return $this->belongsTo(Cities::class, 'city_id', 'id');

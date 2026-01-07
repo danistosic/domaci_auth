@@ -3,31 +3,41 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Cities;            
-use App\Models\ForecastsModel;    
+use App\Models\Cities;
+use App\Models\ForecastsModel;
 use Carbon\Carbon;
 
 class ForecastsSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        $cities = Cities::all(); // svi gradovi
+        // Obriši sve postojeće podatke
+        ForecastsModel::truncate();
+
+        // Dohvati sve gradove
+        $cities = Cities::all();
 
         foreach ($cities as $city) {
 
             for ($i = 0; $i < 5; $i++) {
 
+                // Random weather tip
+                $weatherType = ForecastsModel::WEATHERS[rand(0, 2)];
+
+                // Po defaultu null
+                $probability = null;
+
+                // Ako je kiša ili snijeg -> generiraj postotak
+                if ($weatherType === 'rainy' || $weatherType === 'snowy') {
+                    $probability = rand(1, 100);
+                }
+
                 ForecastsModel::create([
-                    "city_id" => $city->id,
-
-                    // RANDOM TEMPERATURA 15–30
-                    "temperature" => rand(15, 30),
-
-                    // RANDOM DATUM: danas + 1–30 dana
-                    "forecast_date" => Carbon::now()->addDays(rand(1, 30)),
+                    'city_id'       => $city->id,
+                    'temperature'   => rand(15, 30),
+                    'forecast_date' => Carbon::now()->addDays(rand(1, 30)),
+                    'weather_type'  => $weatherType,
+                    'probability'   => $probability,
                 ]);
             }
         }
