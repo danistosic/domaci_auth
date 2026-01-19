@@ -21,6 +21,7 @@ class ForecastController extends Controller
 
         // dohvat prognoze za taj grad
         $prognoze = ForecastsModel::where('city_id', $grad->id)->get();
+        $prognoze = $grad->forecasts()->get();
 
         // vrati view forecasts.blade.php
         return view('forecasts', compact('prognoze'));

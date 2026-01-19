@@ -18,7 +18,7 @@ class ForecastsModel extends Model
     ];
 
     // Lista mogućih weather type vrijednosti
-    const WEATHERS = ['rainy', 'sunny', 'snowy'];
+    const WEATHERS = ['rainy', 'sunny', 'snowy', 'cloudy'];
 
     // Veza: forecast pripada jednom gradu
     public function city()

@@ -21,6 +21,7 @@ class Cities extends Model
     // Jedan grad ima VIŠE forecast zapisa
     public function forecasts()
     {
-        return $this->hasMany(ForecastsModel::class, 'city_id', 'id');
+        return $this->hasMany(ForecastsModel::class, 'city_id', 'id')
+            ->orderBy('forecast_date', 'asc');
     }
 }
