@@ -11,7 +11,7 @@
                 <div class="col-12 col-lg-4">
                     <label class="form-label">Grad</label>
                     <select name="city_id" class="form-select">
-                        @foreach(\App\Models\Cities::all() as $city)
+                        @foreach(\App\Models\Cities::with('forecasts')->get() as $city)
                             <option value="{{ $city->id }}">{{ $city->name }}</option>
                         @endforeach
                     </select>
@@ -48,7 +48,7 @@
         </form>
 
         <div class="row g-3">
-            @foreach(\App\Models\Cities::all() as $city)
+            @foreach(\App\Models\Cities::with('forecasts')->get() as $city)
                 <div class="col-12 col-md-6 col-lg-4 col-xl-3">
                     <div class="card h-100 shadow-sm">
                         <div class="card-header fw-semibold">{{ $city->name }}</div>
@@ -75,6 +75,7 @@
         </div>
     </div>
 @endsection
+
 
 
 

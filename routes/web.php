@@ -5,38 +5,42 @@ use App\Http\Controllers\WeatherController;
 use App\Http\Controllers\ForecastController;
 use App\Http\Controllers\AdminWeatherController;
 use App\Http\Controllers\AdminForecastsController;
+use App\Http\Middleware\AdminCheckMiddleware;
 
 // Homepage
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::view('/', 'welcome');
 
 // Public weather page
 Route::get('/prognoza', [WeatherController::class, 'index']);
 
+Route::get('/forecast/search', [ForecastController::class, 'search']);
 // Public forecast by city
-Route::get('/forecast/{city:name}', [ForecastController::class, 'index']);
+Route::get('/forecast/{city:name}', [ForecastController::class, 'index'])
+    ->where('city', '^(?!search$).+');
 
 // =========================
 // ADMIN WEATHER PAGE
 // =========================
 
-// Admin weather page
-Route::view('/admin/weather', 'admin.weather_index');
+Route::prefix('admin')->middleware(AdminCheckMiddleware::class)->group(function () {
+    // Admin weather page
+    Route::view('/weather', 'admin.weather_index');
 
-// Save weather (POST)
-Route::post('/admin/weather/update', [AdminWeatherController::class, 'update'])
-    ->name('weather.update');
+    // Save weather (POST)
+    Route::post('/weather/update', [AdminWeatherController::class, 'update'])
+        ->name('weather.update');
 
-// =========================
-// ADMIN FORECAST PAGE
-// (prvi dio domaceg)
-// =========================
+    // =========================
+    // ADMIN FORECAST PAGE
+    // (prvi dio domaceg)
+    // =========================
 
-// Samo prikaz stranice sa listom forecastova
-Route::view('/admin/forecasts', 'admin.forecast_index');
+    // Samo prikaz stranice sa listom forecastova
+    Route::view('/forecasts', 'admin.forecast_index');
 
-Route::post("/admin/forecasts/create", [AdminForecastsController::class, "create"])->name("forecasts.create");
+    Route::post('/forecasts/create', [AdminForecastsController::class, 'create'])
+        ->name('forecasts.create');
+});
 
 
 
