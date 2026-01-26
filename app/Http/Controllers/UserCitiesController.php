@@ -1,0 +1,50 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\UserCities;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class UserCitiesController extends Controller
+{
+    public function favourite(Request $request, $city)
+    {
+        $user = Auth::user();
+
+        if ($user === null) {
+            return redirect()->back()->with([
+                'error' => 'Morate biti ulogovani da bi stavili grad u favourite',
+            ]);
+        }
+
+        UserCities::firstOrCreate([
+            'user_id' => $user->id,
+            'city_id' => $city,
+        ]);
+
+        return redirect()->back();
+    }
+
+    public function unfavourite($city)
+    {
+        $user = Auth::user();
+
+        if ($user === null) {
+            return redirect()->back()->with([
+                'error' => 'Morate biti ulogovani da bi stavili grad u favourite',
+            ]);
+        }
+
+        $userFavourite = UserCities::where([
+            'city_id' => $city,
+            'user_id' => $user->id,
+        ])->first();
+
+        if ($userFavourite) {
+            $userFavourite->delete();
+        }
+
+        return redirect()->back();
+    }
+}

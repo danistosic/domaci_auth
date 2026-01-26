@@ -1,50 +1,62 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+
 use App\Http\Controllers\WeatherController;
 use App\Http\Controllers\ForecastController;
 use App\Http\Controllers\AdminWeatherController;
 use App\Http\Controllers\AdminForecastsController;
+use App\Http\Controllers\UserCitiesController;
 use App\Http\Middleware\AdminCheckMiddleware;
 
-// Homepage
-Route::view('/', 'welcome');
+// Public
+Route::get('/', function () {
 
-// Public weather page
-Route::get('/prognoza', [WeatherController::class, 'index']);
+    $userFavourites = [];
 
-Route::get('/forecast/search', [ForecastController::class, 'search']);
-// Public forecast by city
-Route::get('/forecast/{city:name}', [ForecastController::class, 'index'])
-    ->where('city', '^(?!search$).+');
+    $user = Auth::user();
 
-// =========================
-// ADMIN WEATHER PAGE
-// =========================
+    if ($user !== null) {
+        $userFavourites = \App\Models\UserCities::where('user_id', $user->id)->get();
+    }
 
-Route::prefix('admin')->middleware(AdminCheckMiddleware::class)->group(function () {
-    // Admin weather page
-    Route::view('/weather', 'admin.weather_index');
-
-    // Save weather (POST)
-    Route::post('/weather/update', [AdminWeatherController::class, 'update'])
-        ->name('weather.update');
-
-    // =========================
-    // ADMIN FORECAST PAGE
-    // (prvi dio domaceg)
-    // =========================
-
-    // Samo prikaz stranice sa listom forecastova
-    Route::view('/forecasts', 'admin.forecast_index');
-
-    Route::post('/forecasts/create', [AdminForecastsController::class, 'create'])
-        ->name('forecasts.create');
+    return view('welcome', compact('userFavourites'));
 });
 
+Route::get('/prognoza', [WeatherController::class, 'index']);
 
+Route::get('/forecast/search', [ForecastController::class, 'search'])
+    ->name('forecast.search');
 
-// Dashboard (default Laravel)
+Route::get('/forecast/{city:name}', [ForecastController::class, 'index'])
+    ->where('city', '^(?!search).+')
+    ->name('forecast.permalink');
+
+// User favourites
+Route::get('/user-cities/favourite/{city}', [UserCitiesController::class, 'favourite'])
+    ->name('city.favourite');
+
+Route::get('/user-cities/unfavourite/{city}', [UserCitiesController::class, 'unfavourite'])
+    ->name('city.unfavourite');
+
+// Admin
+Route::prefix('admin')
+    ->middleware(AdminCheckMiddleware::class)
+    ->group(function () {
+
+        Route::view('/weather', 'admin.weather_index');
+
+        Route::post('/weather/update', [AdminWeatherController::class, 'update'])
+            ->name('weather.update');
+
+        Route::view('/forecasts', 'admin.forecast_index');
+
+        Route::post('/forecasts/create', [AdminForecastsController::class, 'create'])
+            ->name('forecasts.create');
+    });
+
+// Dashboard
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
